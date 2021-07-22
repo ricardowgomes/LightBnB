@@ -25,7 +25,7 @@ const pool = new Pool({
  */
 
 const getAllProperties = (options, limit = 10) => {
-  const queryString = `SELECT * FROM properties LIMIT $1`;
+  const queryString = `SELECT * FROM properties LIMIT $1;`;
   const queryParams = [limit];
 
   return pool
@@ -60,7 +60,7 @@ const getUserWithEmail = (email) => {
  * @param {string} id The id of the user.
  * @return {Promise<{}>} A promise to the user.
  */
-const getUserWithId = function (id) {
+const getUserWithId = (id) => {
   const queryString = `SELECT * FROM users WHERE id = $1;`;
   const queryParams = [id];
 
@@ -80,7 +80,7 @@ const getUserWithId = function (id) {
  * @param {{name: string, password: string, email: string}} user
  * @return {Promise<{}>} A promise to the user.
  */
-const addUser = function (user) {
+const addUser = (user) => {
   const username = user.name;
   const email = user.email;
   const password = user.password;
@@ -107,8 +107,21 @@ const addUser = function (user) {
  * @param {string} guest_id The id of the user.
  * @return {Promise<[{}]>} A promise to the reservations.
  */
-const getAllReservations = function (guest_id, limit = 10) {
-  return getAllProperties(null, 2);
+const getAllReservations = (guest_id, limit = 10) => {
+  const queryString = `SELECT * FROM reservations JOIN properties ON properties.id = property_id WHERE guest_id = $1 GROUP BY reservations.id, properties.id, properties.title, cost_per_night
+  ORDER BY start_date DESC LIMIT $2;`;
+  const queryParams = [guest_id, limit];
+
+  return pool
+    .query(queryString, queryParams)
+    .then((result) => {
+      if (result.rows.length > 0) {
+        console.log('My reservations', result.rows);
+        return result.rows;
+      }
+      return null;
+    })
+    .catch((err) => err.message);
 };
 
 /**
@@ -124,3 +137,21 @@ const addProperty = function (property) {
 };
 
 module.exports = { pool, getAllProperties, addProperty, getAllReservations, addUser, getUserWithId, getUserWithEmail };
+
+// const username = user.name;
+// const email = user.email;
+// const password = user.password;
+
+// const queryString = `INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *;`;
+// const queryParams = [username, email, password];
+
+// return pool
+//   .query(queryString, queryParams)
+//   .then((result) => {
+//     if (result.rows.length > 0) {
+//       return result.rows[0];
+//     }
+//     return null;
+//   })
+//   .catch((err) => err.message);
+// };
