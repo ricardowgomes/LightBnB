@@ -1,6 +1,6 @@
 INSERT INTO users (name, email, password) VALUES
   ('Roger Waters', 'roger@pinkfloyd.com', '$2a$10$FB/BOAVhpuLvpOREQVmvmezD4ED/.JBIDRh70tGevYzYzQgFId2u.'),
-  ('Freddy Mercury', 'fred@queen.co.uk', '$2a$10$FB/BOAVhpuLvpOREQVmvmezD4ED/.JBIDRh70tGevYzYzQgFId2u.'),
+  ('Freddy Mercury', 'fred@queen.co.uk', '$2b$10$B86Uq9ZB2mjQaRKTLPWCjO9OdTE64mrk1IGJTosKrUN8R6QJtN68a'),
   ('Bob Dylan', 'me@bobdylan.com', '$2a$10$FB/BOAVhpuLvpOREQVmvmezD4ED/.JBIDRh70tGevYzYzQgFId2u.'),
   ('James Hetfield', 'james@metallica.com', '$2a$10$FB/BOAVhpuLvpOREQVmvmezD4ED/.JBIDRh70tGevYzYzQgFId2u.');
 
