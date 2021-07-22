@@ -184,11 +184,45 @@ const getAllReservations = (guest_id, limit = 10) => {
  * @param {{}} property An object containing all of the property details.
  * @return {Promise<{}>} A promise to the property.
  */
-const addProperty = function (property) {
-  const propertyId = Object.keys(properties).length + 1;
-  property.id = propertyId;
-  properties[propertyId] = property;
-  return Promise.resolve(property);
+const addProperty = (property) => {
+  const keys = Object.keys(property);
+  const queryParams = Object.values(property);
+  console.log('Complete property: ', property);
+
+  let queryString = `INSERT INTO properties (`;
+  for (let i = 0; i < keys.length; i++) {
+    if (i === 0) {
+      queryString += `${keys[i]}`;
+
+    } else {
+      queryString += `, ${keys[i]}`;
+    }
+  }
+
+  queryString += `) VALUES (`;
+
+  for (let i = 1; i <= keys.length; i++) {
+    if (i !== keys.length) {
+      queryString += `$${i}, `;
+
+    } else {
+      queryString += `$${i}`;
+    }
+  }
+
+  queryString += `) RETURNING *;`;
+  console.log('Complete query: ', queryString);
+  console.log('Complete params: ', queryParams);
+
+  return pool
+    .query(queryString, queryParams)
+    .then((result) => {
+      if (result.rows.length > 0) {
+        return result.rows[0];
+      }
+      return null;
+    })
+    .catch((err) => err.message);
 };
 
 module.exports = { pool, getAllProperties, addProperty, getAllReservations, addUser, getUserWithId, getUserWithEmail };
